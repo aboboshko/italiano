@@ -1,0 +1,467 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Il mio dizionario</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lora:wght@400;500&family=Karla:wght@400;500&display=swap">
+<style>
+:root{
+  --bg:#F2F0E6; --card:#FBFAF4; --border:#DCD7C2; --line:#ECE8D8;
+  --olive:#6E7B43; --olive-d:#4E5A2C; --olive-dd:#36401D; --olive-bg:#E6E9D6; --olive-tx:#3F4A22;
+  --text:#2B2D24; --muted:#5F6352;
+  --f-bg:#F6E1D6; --f-tx:#7A3A22; --m-bg:#DFE8EE; --m-tx:#2C4A5E;
+  --warn-bg:#F6EED6; --warn-tx:#6B5414; --bad-bg:#F8E9E2; --bad-bd:#E3C2B4;
+  --serif:'Lora', Georgia, serif; --sans:'Karla', system-ui, sans-serif;
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--text);font-family:var(--sans);font-size:15px;line-height:1.5}
+a{color:var(--olive-d)}
+button{font:inherit;color:inherit;cursor:pointer}
+input{font:inherit;color:inherit}
+.wrap{max-width:1100px;margin:0 auto;padding:0 32px}
+header.top{position:sticky;top:0;z-index:5;background:var(--bg);border-bottom:1px solid var(--line)}
+header.top .wrap{display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap;padding-top:16px;padding-bottom:12px}
+.brand{font-family:var(--serif);font-size:22px;font-weight:500;color:var(--olive-d);text-decoration:none}
+nav.main{display:flex;gap:4px;flex-wrap:wrap}
+nav.main a{text-decoration:none;color:var(--text);padding:8px 12px;border-radius:8px}
+nav.main a.on{color:var(--olive-d);font-weight:500;background:var(--olive-bg)}
+main{padding:28px 0 64px}
+h1{margin:0;font-family:var(--serif);font-weight:500;font-size:40px;color:var(--olive-dd);line-height:1.2}
+h2{margin:0;font-family:var(--serif);font-weight:500;font-size:26px;color:var(--olive-dd)}
+.sub{color:var(--muted)}
+.head{display:flex;justify-content:space-between;align-items:flex-end;gap:16px;flex-wrap:wrap;margin-bottom:20px}
+.search{display:flex;flex-direction:column;gap:4px;flex:0 1 300px}
+.search label{font-size:13px;color:var(--muted)}
+.search input{height:44px;padding:0 14px;border-radius:10px;border:1px solid var(--border);background:var(--card)}
+.chips{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}
+.chip-btn{height:38px;padding:0 16px;border-radius:19px;border:1px solid var(--border);background:transparent;font-size:14px}
+.chip-btn.on{background:var(--olive);border-color:var(--olive);color:var(--card)}
+.letters{display:flex;flex-wrap:wrap;gap:2px;margin-bottom:12px;font-family:var(--serif);font-size:16px}
+.letters a,.letters span{width:30px;height:30px;display:flex;align-items:center;justify-content:center;text-decoration:none;border-radius:6px}
+.letters span{color:#C3BEA8}
+.letters a:hover{background:var(--olive-bg)}
+.panel{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:6px 24px}
+.letter-h{font-family:var(--serif);font-size:24px;color:var(--olive);padding:14px 0 4px;border-bottom:1px solid var(--line);scroll-margin-top:90px}
+.row{border-bottom:1px solid var(--line)}
+.row:last-child{border-bottom:0}
+.row-btn{width:100%;display:grid;grid-template-columns:84px minmax(0,1.1fr) minmax(0,1fr) minmax(0,.9fr) 18px;align-items:center;gap:14px;padding:13px 0;border:0;background:transparent;text-align:left}
+.tag{justify-self:start;padding:3px 10px;border-radius:12px;font-size:13px;white-space:nowrap}
+.tag.f{background:var(--f-bg);color:var(--f-tx)} .tag.m{background:var(--m-bg);color:var(--m-tx)} .tag.o{background:var(--olive-bg);color:var(--olive-tx)}
+.it{font-family:var(--serif);font-size:20px;color:var(--olive-dd)}
+.extra{font-size:13px;color:var(--muted)}
+.dot{width:8px;height:8px;border-radius:4px;background:#D9B65C;display:inline-block;margin-left:8px;vertical-align:middle}
+.chev{color:var(--muted);transition:transform .15s}
+.row.open .chev{transform:rotate(90deg)}
+.detail{display:none;padding:0 0 16px 98px;gap:8px;flex-direction:column}
+.row.open .detail{display:flex}
+.ex{font-family:var(--serif);font-size:17px}
+.note{font-size:13px;color:var(--muted)}
+.unver{font-size:12px;color:var(--warn-tx);background:var(--warn-bg);padding:2px 8px;border-radius:8px;align-self:flex-start}
+.speak{width:40px;height:40px;border-radius:20px;border:1px solid var(--border);background:var(--card);color:var(--olive-d);display:inline-flex;align-items:center;justify-content:center;flex:none}
+.legend{display:flex;gap:18px;flex-wrap:wrap;font-size:13px;color:var(--muted);margin-top:14px}
+.legend i{width:10px;height:10px;border-radius:5px;display:inline-block;margin-right:6px;vertical-align:middle}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px}
+.card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:20px 22px;display:flex;flex-direction:column;gap:6px}
+.card .it{font-size:22px}
+.split{display:flex;flex-wrap:wrap;gap:24px;align-items:flex-start}
+.vlist{flex:1 1 240px;max-width:300px;display:flex;flex-direction:column;gap:6px;max-height:70vh;overflow:auto;padding-right:4px}
+.vbtn{min-height:58px;display:flex;justify-content:space-between;align-items:center;gap:8px;padding:8px 14px;border-radius:12px;border:1px solid var(--border);background:var(--card);text-align:left}
+.vbtn.on{background:var(--olive);border-color:var(--olive);color:var(--card)}
+.vbtn .it{font-size:18px;color:inherit}
+.vbtn small{font-size:12px;opacity:.85}
+.conj{flex:999 1 460px;min-width:0;background:var(--card);border:1px solid var(--border);border-radius:16px;padding:24px 28px;display:flex;flex-direction:column;gap:16px}
+.ctable{display:flex;flex-direction:column}
+.crow{display:grid;grid-template-columns:130px minmax(0,1fr);align-items:center;padding:11px 0;border-bottom:1px solid var(--line);font-size:20px}
+.crow:last-child{border-bottom:0}
+.crow .p{font-size:15px;color:var(--muted)}
+.stem{color:var(--muted);font-family:var(--serif)}
+.end{color:var(--olive-d);font-weight:500;font-family:var(--serif)}
+.hide .end{display:inline-block;min-width:48px;height:24px;vertical-align:middle;border-radius:6px;background:var(--olive-bg);color:transparent;cursor:pointer}
+.hide .end.shown{background:transparent;color:var(--olive-d)}
+.hide .end:not(.shown) .isc{background:transparent;color:transparent}
+.badge{font-size:12px;padding:3px 10px;border-radius:10px;background:var(--olive-bg);color:var(--olive-tx)}
+.badge.irr{background:var(--bad-bg);color:var(--f-tx)}
+.outline{height:44px;padding:0 16px;border-radius:10px;border:1px solid var(--olive);background:transparent;color:var(--olive-d);font-size:14px}
+.gsec{display:flex;flex-direction:column;gap:12px;margin-bottom:36px;scroll-margin-top:90px}
+table.g{border-collapse:collapse;width:100%}
+table.g td,table.g th{padding:10px 12px 10px 0;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+table.g th{font-size:13px;color:var(--muted);font-weight:400}
+table.g tr:last-child td{border-bottom:0}
+table.g td.it{font-size:18px}
+.isc{background:var(--olive-bg);color:var(--olive-tx);border-radius:4px;padding:0 2px}
+.pill{padding:5px 12px;border-radius:14px;font-family:var(--serif);background:var(--olive-bg);color:var(--olive-tx)}
+.pill.light{background:var(--card);border:1px solid var(--border);color:var(--text)}
+.ripasso{max-width:720px;margin:0 auto;display:flex;flex-direction:column;gap:20px}
+.bar{height:6px;border-radius:3px;background:#E1DDCB}
+.bar>div{height:6px;border-radius:3px;background:var(--olive);transition:width .2s}
+.flash{min-height:340px;border-radius:20px;border:1px solid var(--border);background:var(--card);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:36px;text-align:center}
+.flash .big{font-family:var(--serif);font-size:52px;font-weight:500;color:var(--olive-dd);line-height:1.15}
+.flash .ans{font-size:26px}
+.grades{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.grades button{height:56px;border-radius:12px;font-size:16px;font-weight:500}
+.g0{border:1px solid var(--bad-bd);background:var(--bad-bg);color:var(--f-tx)}
+.g1{border:1px solid #E5D6A8;background:var(--warn-bg);color:var(--warn-tx)}
+.g2{border:1px solid var(--olive);background:var(--olive);color:var(--card)}
+.status{padding:40px 0;text-align:center;color:var(--muted)}
+.foot{font-size:12px;color:var(--muted);text-align:center;padding:24px 0}
+@media (max-width:700px){
+  .wrap{padding:0 16px}
+  h1{font-size:32px}
+  .row-btn{grid-template-columns:56px minmax(0,1fr) minmax(0,1fr) 16px;gap:10px}
+  .row-btn .extra{display:none}
+  .row-btn .it{font-size:18px}
+  .detail{padding-left:0}
+  .crow{grid-template-columns:100px minmax(0,1fr)}
+  .vlist{max-width:none;max-height:none;flex-direction:row;flex-wrap:wrap}
+  .vbtn{flex:1 1 140px}
+  .flash .big{font-size:38px}
+}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="wrap">
+    <a class="brand" href="#dizionario">Il mio dizionario</a>
+    <nav class="main" aria-label="Разделы">
+      <a href="#dizionario" data-r="dizionario">Dizionario</a>
+      <a href="#frasi" data-r="frasi">Frasi</a>
+      <a href="#verbi" data-r="verbi">Verbi</a>
+      <a href="#grammatica" data-r="grammatica">Grammatica</a>
+      <a href="#ripasso" data-r="ripasso">Ripasso</a>
+    </nav>
+  </div>
+</header>
+<main><div class="wrap" id="app"><div class="status">Carico i dati…</div></div></main>
+<div class="foot" id="foot"></div>
+
+<script>
+const SHEET_ID = '1NiT9HBfF9eEfAgFIzHqHPcfOmdw-_qr2gqFTKpVucPQ';
+const SHEETS = ['Dizionario', 'Verbi', 'Grammatica'];
+const DATA = { Dizionario: [], Verbi: [], Grammatica: [] };
+
+const store = {
+  get(k, d) { try { const v = localStorage.getItem(k); return v ? JSON.parse(v) : d; } catch (e) { return d; } },
+  set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
+};
+
+function esc(s) {
+  return String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+}
+
+function parseCSV(text) {
+  const rows = []; let row = []; let f = ''; let q = false;
+  for (let i = 0; i < text.length; i++) {
+    const c = text[i];
+    if (q) {
+      if (c === '"') { if (text[i + 1] === '"') { f += '"'; i++; } else q = false; }
+      else f += c;
+    } else if (c === '"') q = true;
+    else if (c === ',') { row.push(f); f = ''; }
+    else if (c === '\n' || c === '\r') {
+      if (c === '\r' && text[i + 1] === '\n') i++;
+      row.push(f); rows.push(row); row = []; f = '';
+    } else f += c;
+  }
+  if (f !== '' || row.length) { row.push(f); rows.push(row); }
+  const head = (rows.shift() || []).map(h => h.trim());
+  return rows
+    .filter(r => r.some(v => v.trim() !== ''))
+    .map(r => Object.fromEntries(head.map((h, i) => [h, (r[i] || '').trim()])));
+}
+
+async function loadSheet(name) {
+  const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&headers=1&sheet=${encodeURIComponent(name)}&t=${Date.now()}`;
+  const res = await fetch(url);
+  if (!res.ok) throw new Error(name + ': ' + res.status);
+  const text = await res.text();
+  if (text.trim().startsWith('<')) throw new Error(name + ': нет доступа');
+  return parseCSV(text);
+}
+
+async function loadAll() {
+  const cached = store.get('data_cache', null);
+  if (cached) { Object.assign(DATA, cached.data); route(); setFoot(cached.at, true); }
+  try {
+    const parts = await Promise.all(SHEETS.map(loadSheet));
+    SHEETS.forEach((n, i) => { DATA[n] = parts[i]; });
+    const at = new Date().toISOString();
+    store.set('data_cache', { at, data: DATA });
+    route(); setFoot(at, false);
+  } catch (e) {
+    if (!cached) {
+      document.getElementById('app').innerHTML =
+        '<div class="status">Не удалось загрузить таблицу.<br>Проверь, что в Google Sheets включён доступ «Все, у кого есть ссылка → Читатель».<br><small>' + esc(e.message) + '</small></div>';
+    } else setFoot(cached.at, true, true);
+  }
+}
+
+function setFoot(at, cached, failed) {
+  const d = new Date(at).toLocaleString('ru-RU', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' });
+  document.getElementById('foot').textContent =
+    (failed ? 'Нет связи с таблицей · ' : '') + 'Данные: ' + d + (cached && !failed ? ' · обновляю…' : '');
+}
+
+let itVoice = null;
+function pickVoice() {
+  const vs = speechSynthesis.getVoices();
+  itVoice = vs.find(v => v.lang === 'it-IT') || vs.find(v => v.lang && v.lang.startsWith('it')) || null;
+}
+if ('speechSynthesis' in window) { pickVoice(); speechSynthesis.onvoiceschanged = pickVoice; }
+function speak(text) {
+  if (!('speechSynthesis' in window)) return;
+  speechSynthesis.cancel();
+  const u = new SpeechSynthesisUtterance(text);
+  u.lang = 'it-IT'; if (itVoice) u.voice = itVoice; u.rate = 0.9;
+  speechSynthesis.speak(u);
+}
+const SPEAK_ICON = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 5 6 9H3v6h3l5 4V5z"></path><path d="M15.5 8.5a5 5 0 0 1 0 7"></path></svg>';
+function speakBtn(text) {
+  return `<button type="button" class="speak" data-say="${esc(text)}" aria-label="Произнести ${esc(text)}">${SPEAK_ICON}</button>`;
+}
+document.addEventListener('click', e => {
+  const b = e.target.closest('[data-say]');
+  if (b) { e.stopPropagation(); speak(b.dataset.say); }
+});
+
+const POS = { sostantivo: 'Sostantivi', verbo: 'Verbi', aggettivo: 'Aggettivi' };
+function genderClass(w) { return w.Genere === 'f' ? 'f' : w.Genere === 'm' ? 'm' : 'o'; }
+function tagText(w) {
+  if (w.Articolo) return w.Articolo;
+  const p = w.Parte_del_discorso;
+  return ({ verbo: 'verbo', aggettivo: 'agg.', avverbio: 'avv.', pronome: 'pron.', congiunzione: 'cong.', preposizione: 'prep.', frase: 'frase' })[p] || '—';
+}
+function sortKey(s) { return s.replace(/^[(\s]+/, '').toLowerCase(); }
+function display(w) {
+  if (!w.Articolo) return w.Italiano;
+  return w.Articolo.endsWith("'") ? w.Articolo + w.Italiano : w.Articolo + ' ' + w.Italiano;
+}
+
+const state = { dFilter: 'all', dQuery: '', verb: null, hideEnds: false };
+
+function viewDizionario(app) {
+  const words = DATA.Dizionario.filter(w => w.Tipo !== 'frase' && w.Italiano);
+  const q = state.dQuery.toLowerCase();
+  const list = words
+    .filter(w => state.dFilter === 'all' || (state.dFilter === 'altro' ? !POS[w.Parte_del_discorso] : w.Parte_del_discorso === state.dFilter))
+    .filter(w => !q || w.Italiano.toLowerCase().includes(q) || (w.Russo || '').toLowerCase().includes(q))
+    .sort((a, b) => sortKey(a.Italiano).localeCompare(sortKey(b.Italiano), 'it'));
+  const letters = new Set(list.map(w => sortKey(w.Italiano)[0].toUpperCase()));
+  const filters = [['all', 'Tutto'], ['sostantivo', 'Sostantivi'], ['verbo', 'Verbi'], ['aggettivo', 'Aggettivi'], ['altro', 'Altro']];
+  let last = '';
+  const rows = list.map(w => {
+    const L = sortKey(w.Italiano)[0].toUpperCase();
+    const head = L !== last ? `<div class="letter-h" id="L-${esc(L)}">${esc(L)}</div>` : '';
+    last = L;
+    const extra = w.Plurale ? 'мн. ' + w.Plurale : (w.Parte_del_discorso === 'verbo' ? (w.Nota || '').replace(/^verbo\s*/, '') : '');
+    return head + `<div class="row">
+      <button type="button" class="row-btn" aria-expanded="false">
+        <span class="tag ${genderClass(w)}">${esc(tagText(w))}</span>
+        <span class="it">${esc(w.Italiano)}${w.Verificato === 'no' ? '<span class="dot" title="не проверено преподавателем"></span>' : ''}</span>
+        <span class="ru">${esc(w.Russo)}</span>
+        <span class="extra">${esc(extra)}</span>
+        <svg class="chev" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 6 6 6-6 6"></path></svg>
+      </button>
+      <div class="detail">
+        <div style="display:flex;align-items:center;gap:12px">${speakBtn(display(w))}<span class="ex">${esc(w.Esempio)}</span></div>
+        <div class="sub">${esc(w.Esempio_traduzione)}</div>
+        ${w.Nota ? `<div class="note">${esc(w.Nota)}</div>` : ''}
+        ${w.Verificato === 'no' ? '<span class="unver">ещё не проверено преподавателем</span>' : ''}
+      </div></div>`;
+  }).join('');
+  const alpha = 'ABCDEFGHILMNOPQRSTUVZ'.split('').map(c => letters.has(c) ? `<a href="#" data-jump="${c}">${c}</a>` : `<span>${c}</span>`).join('');
+  app.innerHTML = `
+    <div class="head">
+      <div><h1>Dizionario</h1><div class="sub">${list.length} из ${words.length} слов · по алфавиту</div></div>
+      <div class="search"><label for="q">Поиск</label><input id="q" type="search" placeholder="casa или дом" value="${esc(state.dQuery)}"></div>
+    </div>
+    <div class="chips" role="group" aria-label="Фильтр">${filters.map(([k, l]) => `<button type="button" class="chip-btn ${state.dFilter === k ? 'on' : ''}" data-f="${k}" aria-pressed="${state.dFilter === k}">${l}</button>`).join('')}</div>
+    <div class="letters" aria-label="Алфавит">${alpha}</div>
+    <div class="panel">${rows || '<div class="status">Ничего не нашлось</div>'}</div>
+    <div class="legend"><span><i style="background:#C98A6E"></i>femminile</span><span><i style="background:#6F8FA6"></i>maschile</span><span><i style="background:#8A9660"></i>verbo, aggettivo, altro</span><span><i style="background:#D9B65C"></i>не проверено</span></div>`;
+  const qi = app.querySelector('#q');
+  qi.addEventListener('input', () => { state.dQuery = qi.value; const pos = qi.selectionStart; viewDizionario(app); const n = app.querySelector('#q'); n.focus(); n.setSelectionRange(pos, pos); });
+  app.querySelectorAll('[data-f]').forEach(b => b.addEventListener('click', () => { state.dFilter = b.dataset.f; viewDizionario(app); }));
+  app.querySelectorAll('[data-jump]').forEach(a => a.addEventListener('click', e => { e.preventDefault(); const t = document.getElementById('L-' + a.dataset.jump); if (t) t.scrollIntoView({ behavior: 'smooth' }); }));
+  app.querySelectorAll('.row-btn').forEach(b => b.addEventListener('click', () => { const r = b.parentElement; r.classList.toggle('open'); b.setAttribute('aria-expanded', r.classList.contains('open')); }));
+}
+
+function viewFrasi(app) {
+  const list = DATA.Dizionario.filter(w => w.Tipo === 'frase' && w.Italiano)
+    .sort((a, b) => sortKey(a.Italiano).localeCompare(sortKey(b.Italiano), 'it'));
+  app.innerHTML = `
+    <div class="head"><div><h1>Frasi</h1><div class="sub">${list.length} фраз и выражений</div></div></div>
+    <div class="cards">${list.map(w => `
+      <div class="card">
+        <div style="display:flex;justify-content:space-between;gap:10px;align-items:flex-start"><span class="it">${esc(w.Italiano)}</span>${speakBtn(w.Italiano)}</div>
+        <div>${esc(w.Russo)}</div>
+        ${w.Nota ? `<div class="note">${esc(w.Nota)}</div>` : ''}
+        ${w.Esempio && w.Esempio !== w.Italiano ? `<div style="margin-top:8px;padding-top:10px;border-top:1px solid var(--line)"><div class="ex" style="font-size:16px">${esc(w.Esempio)}</div><div class="note">${esc(w.Esempio_traduzione)}</div></div>` : ''}
+        ${w.Verificato === 'no' ? '<span class="unver">не проверено</span>' : ''}
+      </div>`).join('')}</div>`;
+}
+
+const PERSONS = [['io', 'io'], ['tu', 'tu'], ['lui_lei', 'lui / lei / Lei'], ['noi', 'noi'], ['voi', 'voi'], ['loro', 'loro']];
+function splitForm(inf, form) {
+  const stem = inf.slice(0, -3);
+  if (stem && form.toLowerCase().startsWith(stem.toLowerCase()) && form.length > stem.length) {
+    return { stem: form.slice(0, stem.length), end: form.slice(stem.length) };
+  }
+  return { stem: '', end: form };
+}
+function endHTML(inf, form, isc) {
+  const { stem, end } = splitForm(inf, form);
+  let e = esc(end);
+  if (isc && end.startsWith('isc')) e = `<span class="isc">isc</span>` + esc(end.slice(3));
+  return `<span class="stem">${esc(stem)}</span><span class="end" tabindex="0">${e}</span>`;
+}
+function viewVerbi(app) {
+  const verbs = DATA.Verbi.filter(v => v.Infinito).sort((a, b) => a.Infinito.localeCompare(b.Infinito, 'it'));
+  if (!verbs.length) { app.innerHTML = '<div class="status">Глаголов пока нет</div>'; return; }
+  if (!state.verb || !verbs.find(v => v.Infinito === state.verb)) state.verb = verbs[0].Infinito;
+  const cur = verbs.find(v => v.Infinito === state.verb);
+  const isc = cur.Gruppo === 'ire-isc';
+  const irr = cur.Irregolare === 'sì';
+  app.innerHTML = `
+    <div class="head"><div><h1>Verbi</h1><div class="sub">${verbs.length} глаголов · presente indicativo</div></div></div>
+    <div class="split">
+      <div class="vlist" role="list">${verbs.map(v => `<button type="button" class="vbtn ${v.Infinito === state.verb ? 'on' : ''}" data-v="${esc(v.Infinito)}" aria-pressed="${v.Infinito === state.verb}"><span style="display:flex;flex-direction:column;align-items:flex-start"><span class="it">${esc(v.Infinito)}</span><small>${esc(v.Russo)}</small></span><small>${v.Irregolare === 'sì' ? '!' : '-' + esc(v.Gruppo)}</small></button>`).join('')}</div>
+      <section class="conj">
+        <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap">
+          <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+            <span class="it" style="font-size:34px;font-weight:500">${esc(cur.Infinito)}</span>
+            <span class="sub" style="font-size:17px">${esc(cur.Russo)}</span>
+            <span class="badge ${irr ? 'irr' : ''}">${irr ? 'irregolare' : '-' + esc(cur.Gruppo)}</span>
+            ${speakBtn(cur.Infinito)}
+          </div>
+          <button type="button" class="outline" id="hide">${state.hideEnds ? 'Показать окончания' : 'Спрятать окончания'}</button>
+        </div>
+        <div class="ctable ${state.hideEnds ? 'hide' : ''}">${PERSONS.map(([k, p]) => `<div class="crow"><span class="p">${p}</span><span>${irr ? `<span class="end" tabindex="0">${esc(cur[k])}</span>` : endHTML(cur.Infinito, cur[k] || '', isc)}</span></div>`).join('')}</div>
+        <div class="note">${state.hideEnds ? 'Назови форму вслух, потом нажми на клетку, чтобы проверить себя' : irr ? 'Неправильный глагол: формы нужно запомнить целиком' : isc ? 'Глагол с -isc: вставка есть в io, tu, lui/lei, loro, но не в noi и voi' : 'Основа серая, окончание выделено'}</div>
+      </section>
+    </div>`;
+  app.querySelectorAll('[data-v]').forEach(b => b.addEventListener('click', () => { state.verb = b.dataset.v; viewVerbi(app); }));
+  app.querySelector('#hide').addEventListener('click', () => { state.hideEnds = !state.hideEnds; viewVerbi(app); });
+  app.querySelectorAll('.hide .end').forEach(s => {
+    const show = () => s.classList.add('shown');
+    s.addEventListener('click', show);
+    s.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); show(); } });
+  });
+}
+
+function gTable(cols, rows, itCols) {
+  return `<table class="g">${cols ? `<tr>${cols.map(c => `<th>${esc(c)}</th>`).join('')}</tr>` : ''}${rows.map(r => `<tr>${r.map((c, i) => `<td class="${itCols.includes(i) ? 'it' : ''}">${esc(c)}</td>`).join('')}</tr>`).join('')}</table>`;
+}
+function renderGram(g) {
+  let d; try { d = JSON.parse(g.Dati_JSON || '{}'); } catch (e) { return '<div class="note">Не удалось прочитать данные таблицы</div>'; }
+  const parts = [];
+  if (d.regola) parts.push(`<div class="sub">${esc(d.regola)}</div>`);
+  if (d.nota) parts.push(`<div class="note">${esc(d.nota)}</div>`);
+  if (d.modello) {
+    parts.push(`<div class="panel" style="padding:8px 24px;max-width:520px">${d.modello.map(([p, s, i, e]) => `<div class="crow"><span class="p">${esc(p)}</span><span><span class="stem">${esc(s)}</span>${i ? `<span class="isc end">${esc(i)}</span>` : ''}<span class="end">${esc(e)}</span></span></div>`).join('')}</div>`);
+  }
+  if (d.con_isc) parts.push(`<div style="display:flex;flex-direction:column;gap:8px"><div class="note">С -isc</div><div style="display:flex;gap:6px;flex-wrap:wrap">${d.con_isc.map(v => `<span class="pill">${esc(v)}</span>`).join('')}</div></div>`);
+  if (d.senza_isc) parts.push(`<div style="display:flex;flex-direction:column;gap:8px"><div class="note">Без -isc</div><div style="display:flex;gap:6px;flex-wrap:wrap">${d.senza_isc.map(v => `<span class="pill light">${esc(v)}</span>`).join('')}</div></div>`);
+  if (d.righe) {
+    const t = g.Tipo_tabella;
+    const cols = d.colonne || null;
+    const itCols = t === 'coniugazione' ? [1] : t === 'espressioni' ? [0, 2] : t === 'tabella' ? [] : [0];
+    parts.push(`<div class="panel" style="padding:4px 24px">${gTable(cols, d.righe, itCols)}</div>`);
+  }
+  if (d.esempi) parts.push(`<div style="display:flex;flex-direction:column;gap:4px">${d.esempi.map(([a, b]) => `<div><span class="ex">${esc(a)}</span> <span class="note">— ${esc(b)}</span></div>`).join('')}</div>`);
+  return parts.join('');
+}
+function viewGrammatica(app) {
+  const list = DATA.Grammatica.filter(g => g.Titolo);
+  app.innerHTML = `
+    <div class="head"><div><h1>Grammatica</h1><div class="sub">Правила и таблицы</div></div></div>
+    <div class="chips">${list.map(g => `<a class="chip-btn" style="display:inline-flex;align-items:center;text-decoration:none;color:var(--text);background:var(--card)" href="#" data-g="${esc(g.ID)}">${esc(g.Titolo.split(' — ')[0])}</a>`).join('')}</div>
+    ${list.map(g => `<section class="gsec" id="G-${esc(g.ID)}"><h2>${esc(g.Titolo)}</h2>${renderGram(g)}</section>`).join('')}`;
+  app.querySelectorAll('[data-g]').forEach(a => a.addEventListener('click', e => { e.preventDefault(); document.getElementById('G-' + a.dataset.g).scrollIntoView({ behavior: 'smooth' }); }));
+}
+
+const INTERVALS = [0, 1, 2, 4, 8, 16, 32];
+function today() { const d = new Date(); d.setHours(0, 0, 0, 0); return d.getTime(); }
+const DAY = 86400000;
+const rip = { queue: [], i: 0, flipped: false, src: store.get('rip_src', 'parole'), dir: store.get('rip_dir', 'it'), done: 0 };
+function buildQueue() {
+  const prog = store.get('progress', {});
+  const pool = DATA.Dizionario.filter(w => w.Italiano && w.ID && (rip.src === 'tutto' || (rip.src === 'frasi' ? w.Tipo === 'frase' : w.Tipo !== 'frase')));
+  const t = today();
+  const due = pool.filter(w => prog[w.ID] && prog[w.ID].due <= t).sort((a, b) => prog[a.ID].due - prog[b.ID].due);
+  const fresh = pool.filter(w => !prog[w.ID]).sort(() => Math.random() - 0.5).slice(0, 15);
+  rip.queue = due.concat(fresh); rip.i = 0; rip.flipped = false; rip.done = 0;
+}
+function grade(g) {
+  const w = rip.queue[rip.i];
+  const prog = store.get('progress', {});
+  const p = prog[w.ID] || { box: 0, due: today() };
+  if (g === 2) p.box = Math.min(p.box + 1, INTERVALS.length - 1);
+  if (g === 0) p.box = 0;
+  p.due = today() + (g === 0 ? 0 : g === 1 ? DAY : INTERVALS[p.box] * DAY);
+  prog[w.ID] = p; store.set('progress', prog);
+  if (g === 0) rip.queue.push(w);
+  rip.done++; rip.i++; rip.flipped = false;
+}
+function viewRipasso(app) {
+  if (!rip.queue.length && rip.i === 0) buildQueue();
+  const total = rip.queue.length;
+  const w = rip.queue[rip.i];
+  const prog = store.get('progress', {});
+  const learned = Object.values(prog).filter(p => p.box >= 3).length;
+  const opts = (name, val, items) => items.map(([k, l]) => `<button type="button" class="chip-btn ${val === k ? 'on' : ''}" data-${name}="${k}" aria-pressed="${val === k}">${l}</button>`).join('');
+  let body;
+  if (!w) {
+    body = `<div class="flash"><div class="big" style="font-size:36px">Bravo!</div><div class="sub">На сегодня всё. Повторено карточек: ${rip.done}.</div><button type="button" class="outline" id="again">Ещё 15 новых</button></div>`;
+  } else {
+    const front = rip.dir === 'it' ? display(w) : w.Russo;
+    const back = rip.dir === 'it' ? w.Russo : display(w);
+    body = `
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <div style="display:flex;justify-content:space-between;font-size:14px;color:var(--muted)"><span>Карточка ${rip.i + 1} из ${total}</span><span>выучено: ${learned}</span></div>
+        <div class="bar" role="progressbar" aria-valuemin="0" aria-valuemax="${total}" aria-valuenow="${rip.i}"><div style="width:${Math.round(rip.i / Math.max(total, 1) * 100)}%"></div></div>
+      </div>
+      <button type="button" class="flash" id="card" aria-label="Перевернуть карточку">
+        <span class="note">${esc(w.Tipo === 'frase' ? 'frase' : (w.Parte_del_discorso || ''))}${w.Genere ? ' · ' + esc(w.Genere) : ''}</span>
+        <span class="big" ${rip.dir === 'ru' ? 'style="font-family:var(--sans);font-size:40px"' : ''}>${esc(front)}</span>
+        ${rip.flipped ? `<span class="ans" ${rip.dir === 'ru' ? 'style="font-family:var(--serif)"' : ''}>${esc(back)}</span>${w.Esempio ? `<span class="ex" style="color:var(--muted);font-size:16px">${esc(w.Esempio)}<br><span class="note">${esc(w.Esempio_traduzione)}</span></span>` : ''}` : '<span class="note">нажми, чтобы увидеть ответ</span>'}
+      </button>
+      ${rip.flipped ? `<div class="grades"><button type="button" class="g0" data-g="0">Non lo so</button><button type="button" class="g1" data-g="1">Quasi</button><button type="button" class="g2" data-g="2">Lo so</button></div>
+      <div class="note" style="text-align:center">«Non lo so» вернёт карточку сегодня, «Lo so» отложит на несколько дней · клавиши 1 2 3</div>` : `<div style="display:flex;justify-content:center">${speakBtn(display(w))}</div>`}`;
+  }
+  app.innerHTML = `
+    <div class="ripasso">
+      <div class="head" style="margin-bottom:0"><div><h1>Ripasso</h1><div class="sub">Карточки с интервальным повторением</div></div></div>
+      <div class="chips" style="margin-bottom:0">${opts('src', rip.src, [['parole', 'Parole'], ['frasi', 'Frasi'], ['tutto', 'Tutto']])}<span style="width:12px"></span>${opts('dir', rip.dir, [['it', 'IT → RU'], ['ru', 'RU → IT']])}</div>
+      ${body}
+    </div>`;
+  const card = app.querySelector('#card');
+  if (card) card.addEventListener('click', e => { if (e.target.closest('[data-say]')) return; rip.flipped = !rip.flipped; viewRipasso(app); });
+  app.querySelectorAll('.grades [data-g]').forEach(b => b.addEventListener('click', () => { grade(+b.dataset.g); viewRipasso(app); }));
+  app.querySelectorAll('[data-src]').forEach(b => b.addEventListener('click', () => { rip.src = b.dataset.src; store.set('rip_src', rip.src); buildQueue(); viewRipasso(app); }));
+  app.querySelectorAll('[data-dir]').forEach(b => b.addEventListener('click', () => { rip.dir = b.dataset.dir; store.set('rip_dir', rip.dir); rip.flipped = false; viewRipasso(app); }));
+  const again = app.querySelector('#again');
+  if (again) again.addEventListener('click', () => { buildQueue(); viewRipasso(app); });
+}
+document.addEventListener('keydown', e => {
+  if (location.hash !== '#ripasso' || e.target.tagName === 'INPUT') return;
+  const app = document.getElementById('app');
+  if (e.key === ' ' && document.activeElement === document.body) { e.preventDefault(); rip.flipped = !rip.flipped; viewRipasso(app); }
+  if (rip.flipped && ['1', '2', '3'].includes(e.key) && rip.queue[rip.i]) { grade(+e.key - 1); viewRipasso(app); }
+});
+
+const VIEWS = { dizionario: viewDizionario, frasi: viewFrasi, verbi: viewVerbi, grammatica: viewGrammatica, ripasso: viewRipasso };
+function route() {
+  const r = (location.hash || '#dizionario').slice(1);
+  const key = VIEWS[r] ? r : 'dizionario';
+  document.querySelectorAll('nav.main a').forEach(a => a.classList.toggle('on', a.dataset.r === key));
+  if (!DATA.Dizionario.length && !DATA.Verbi.length) return;
+  VIEWS[key](document.getElementById('app'));
+}
+window.addEventListener('hashchange', () => { route(); window.scrollTo(0, 0); });
+loadAll();
+</script>
+</body>
+</html>
